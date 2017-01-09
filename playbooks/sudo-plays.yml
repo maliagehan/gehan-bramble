@@ -18,7 +18,7 @@
 
     - name: install pi-camera
       apt: python-picamera
-      force: yes
+        force: yes
       when: install_picam
 
     - name: Restart ssh service on all PIs
