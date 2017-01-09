@@ -17,7 +17,8 @@
   tasks:
 
     - name: install pi-camera
-      command: sudo apt-get install python-picamera
+      apt: python-picamera
+      force: yes
       when: install_picam
 
     - name: Restart ssh service on all PIs
