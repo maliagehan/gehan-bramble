@@ -1,5 +1,5 @@
 ---
-- hosts: Danforth_Shakoor
+- hosts: gehan-bramble
   gather_facts: False
   remote_user: pi
   become: yes
@@ -8,52 +8,19 @@
     change_utmp: false
     use_dns: false
     change_dns: false
-    restart_ganglia: true
     restart_ssh: false
     timezone: US/Central
     timezone_change: true
     cron_add: false
     cron_remove: false
     python_script: true
-    gps_send: true
-    master_gps: ../master_gps.txt
     
   tasks:
-    - name: Restart ganglia on all PIs.
-      command: systemctl restart ganglia-monitor
-      when: restart_ganglia
 
     - name: Restart ssh service on all PIs
       command: systemctl restart ssh.service
       when: restart_ssh
       
-    - name: Find with grep if -u0 exists
-      command: grep '-u0' /etc/default/ssh
-      register: utmp_set
-      failed_when: False
-      
-    - name: Set no utmp in sshd. No DNS reverse lookup.
-      command: sed -i 's/\(SSHD_OPTS=\).*/\1-u0/' /etc/default/ssh
-      when: (utmp and utmp_set.rc == 1 and change_utmp)
-
-    - name: Set utmp back in sshd.
-      command: sed -i 's/\(SSHD_OPTS=\).*/\1/' /etc/default/ssh
-      when: (not utmp and utmp_set.rc == 0 and change_utmp)
-
-    - name: Find with awk if UseDNS exists.
-      command: grep 'UseDNS'/etc/ssh/sshd_config
-      register: dns_exist
-      failed_when: False
-
-    - name: Add UseDNS no to sshd_config
-      # command: echo "UseDNS no" >> /etc/ssh/sshd_config
-      command: sed -i -e '$aUseDNS no' /etc/ssh/sshd_config
-      when: (use_dns and dns_exist.rc == 1 and change_dns)
-
-    - name: Remove useDNS from sshd_config.
-      shell: sed  '$(grep -n "UseDNS" /etc/ssh/sshd_config | cut -f1 -d':')d' /etc/ssh/sshd_config
-      when: (not use_dns and dns_exist.rc == 0 and change_dns)
-
     - name: Change timezone
       shell: "echo {{ timezone }} | tee /etc/timezone > /dev/null"
       become: yes
@@ -66,7 +33,7 @@
 
     - name: Send camera_single.py to the rPIs.
       copy:
-        src: /home/clizarraga/Projects/EPSCOR_Bramble_GH9C/pi_files/camera_single.py
+        src: /home/pi/gehan-bramble/camera_single.py
         dest: /home/pi/camera_single.py
       become: no
       when: python_script
@@ -84,35 +51,6 @@
         mode: "u+x"
       become: yes
       when: cam_single.stat.exists
-
-    - name: Get gps_info.txt information from a master text file
-      local_action:
-        shell grep {{ inventory_hostname }} {{ master_gps }} | cut -f2-8 -d' '
-      register: gps_info
-      delegate_to: clizarraga_chronos
-      become: no
-
-    - name: Create gps_info.txt on the rPI
-      shell: "echo '{{ gps_info.stdout }}' > /home/pi/gps_info.txt"
-      become: no
-      when: gps_send
-
-    - name: Add dradis to hosts file of every RPI
-      lineinfile:
-        dest: /etc/hosts
-        line: "10.5.1.20       dradis.ddpsc.org dradis"
-      notify:
-        - restart ntp
-        - reload ntp
-
-    - name: Copy correct ntp.conf file to each RPI
-      copy:
-        src: ../ntp.conf
-        dest: /etc/ntp.conf
-      become: yes
-      notify:
-        - restart ntp
-        - reload ntp
 
   handlers:
     - name: restart ntp

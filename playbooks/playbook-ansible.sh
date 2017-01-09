@@ -1,6 +1,6 @@
 #!/bin/bash
-source /home/clizarraga/usr/local/ansible/hacking/env-setup
-# ansible-playbook=/usr/bin/ansible-playbook
+
+ansible-playbook=/usr/bin/ansible-playbook
 PREV_DIR=$(pwd)
 ANSIBLE_PLAYBOOKS=$(dirname $1)
 cd $ANSIBLE_PLAYBOOKS

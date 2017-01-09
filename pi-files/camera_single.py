@@ -12,6 +12,7 @@ import tarfile
 import zipfile
 import shutil
 import re
+import numpy as np
 
 from fractions import Fraction
 from datetime import datetime, timedelta
@@ -41,6 +42,13 @@ def get_ip():
         s.close()
     return IP
 
+def get_position(ip):
+    postable=np.loadtxt("/home/pi/pi-id.txt", dtype=np.dtype('str'))
+    ip=str(ip)
+    posrow=postable[postable[:,1]==ip]
+    position=posrow[0,0]
+    return position
+
 # Make the medata for the current Raspberry Pi Camera.
 def make_metadata(experiment, ip, camera, position):
     metadata = {}
@@ -48,9 +56,8 @@ def make_metadata(experiment, ip, camera, position):
         "experiment": experiment
         }
     metadata['fixed_camera_data'] = {
-        "hostname": hostname,
         "ip_address": ip,
-        "grid_coord": position
+        "position": position
     }
     metadata['variable_camera_settings'] = {
         "zoom": camera.zoom,
@@ -105,6 +112,7 @@ with picamera.PiCamera() as camera:
         now_utc = datetime.utcnow()
         date = now.strftime("%Y-%m-%d")
         hour = now.strftime("%Y-%m-%d-%H")
+        minute= now.strftime("%Y-%m-%d-%H-%M")
         # Full path directories.
         date_directory = os.path.join(image_dir, now.strftime("%Y-%m-%d"))
         hour_directory = os.path.join(date_directory, now.strftime("%Y-%m-%d-%H"))
@@ -119,19 +127,21 @@ with picamera.PiCamera() as camera:
 
         # For multi-platform ip getting
         ip = get_ip()
+        position=get_position(ip)
 
         # Making the filename for the capture of the image.
     
         ext = "jpg"
         now=now.strftime("%Y-%m-%d-%H-%M")
-        filename = str(ip)+"_pos-"+str(position)+"_"+now.strftime("%Y-%m-%d-%H-%M")+".jpg"
+        filename = str(ip)+"_pos-"+position+"_"+minute+".jpg"
+        print(filename)
         filename = os.path.join(hour_directory, filename)
         camera.capture(filename, quality=100)
         print("Captured %s" % filename)
 
         # Getting all the metadata that will be going into the json file.
         metadata_name = filename[:-4]
-        experiment = "To be determined later..."
+        experiment = "jt-quinoa-cold"
         metadata = make_metadata(experiment, ip, camera, position)
         json_filename = metadata_name + ".json"
         json_filename = os.path.join(hour_directory, json_filename)
@@ -139,7 +149,7 @@ with picamera.PiCamera() as camera:
             json.dump(metadata, fp, sort_keys=True, indent=4)
 
         # Creating directory structure tar
-        dir_join = str(ip)+"_"+now.strftime("%Y-%m-%d-%H")
+        dir_join = str(ip)+"_"+hour
         with tarfile.open(dir_join+".tar", "w") as tar:
             tar.add(date_directory, arcname=date)
         shutil.rmtree(date_directory)
