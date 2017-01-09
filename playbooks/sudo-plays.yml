@@ -4,19 +4,22 @@
   remote_user: pi
   become: yes
   vars:
-    utmp: false
-    change_utmp: false
     use_dns: false
-    change_dns: false
     restart_ssh: false
     timezone: US/Central
-    timezone_change: true
+    timezone_change: false
     cron_add: false
     cron_remove: false
-    python_script: true
-    pi_id: true
+    python_script: false
+    pi_id: false
+    install_picam: true
     
   tasks:
+
+    -name: install pi-camera
+     command: sudo apt-get install python-picamera
+     when: install_picam
+
 
     - name: Restart ssh service on all PIs
       command: systemctl restart ssh.service
@@ -59,6 +62,7 @@
         mode: "u+x"
       become: yes
       when: cam_single.stat.exists
+      
 
   handlers:
     - name: restart ntp
