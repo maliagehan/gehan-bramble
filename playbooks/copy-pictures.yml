@@ -30,6 +30,10 @@
      with_items:
        "{{ files_to_copy.stdout_lines }}"
 
+   - file:
+      path: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
+      state: directory
+
    - name: Pull with rsh/ssh and rsync from chronos
      synchronize:
       src: "{{ img_dir }}/"
@@ -38,7 +42,6 @@
       use_ssh_args: yes
       ssh_args: yes
       rsync_opts:
-        # - "--rsh=rsh"
         - "--remove-source-files"
         - "--timeout=30"
 
