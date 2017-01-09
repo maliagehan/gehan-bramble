@@ -17,7 +17,8 @@
   tasks:
 
     - name: install pi-camera
-      apt: python-picamera
+      apt: 
+        name: python-picamera
         force: yes
       when: install_picam
 
