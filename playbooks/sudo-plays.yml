@@ -33,10 +33,17 @@
 
     - name: Send camera_single.py to the rPIs.
       copy:
-        src: /home/pi/gehan-bramble/camera_single.py
+        src: /home/pi/gehan-bramble/pi-files/camera_single.py
         dest: /home/pi/camera_single.py
       become: no
       when: python_script
+
+    - name: Send pi-id.txt to the rPIs.
+      copy:
+        src: /home/pi/gehan-bramble/pi-files/pi-id.txt
+        dest: /home/pi/pi-id.txt
+      become: no
+      when: pi_id
       
     - name: Check if camera_single.py exists
       stat:
