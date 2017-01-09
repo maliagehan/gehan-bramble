@@ -24,6 +24,12 @@
     - debug:
         msg: "Files_to_copy are {{ files_to_copy.stdout_lines }} and their length is {{ files_to_copy.stdout_lines | length }} and the comparison is {{ files_to_copy.stdout_lines | length | int >=1 }}"
 
+    - name: Get file date.
+      local_action:
+        shell basename {{ item }} | cut -d'_' -f2 | cut -d'.' -f1 | cut -d'-' -f1-3
+      register: folder
+      with_items:
+        "{{ files_to_copy.stdout_lines }}"
 
     - debug:
         msg: "Folder for the images is {{ folder.results[0].stdout }}"
@@ -31,11 +37,13 @@
     - name: Pull with rsh/ssh and rsync from chronos
       synchronize:
         src: "{{ img_dir }}/{{ item }}"
+        # dest: "{{ local_dir }}/{{ date.stdout }}/"
         dest: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
         mode: pull
         use_ssh_args: yes
         ssh_args: yes
         rsync_opts:
+          # - "--rsh=rsh"
           - "--remove-source-files"
           - "--timeout=30"
 
