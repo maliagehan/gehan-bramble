@@ -32,7 +32,7 @@
 
    - name: Pull with rsh/ssh and rsync from chronos
      synchronize:
-      src: "{{ img_dir }}/{{ item }}"
+      src: "{{ img_dir }}/"
       dest: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
       mode: pull
       use_ssh_args: yes
