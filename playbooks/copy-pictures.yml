@@ -32,7 +32,7 @@
 
    - file:
       path: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
-      state: directory
+      state: absent
 
    - name: Pull with rsh/ssh and rsync from chronos
      synchronize:
