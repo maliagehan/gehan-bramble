@@ -20,9 +20,6 @@
      register: files_to_copy
      changed_when: "'Success' in files_to_copy.stderr"
 
-   - debug:
-       msg: "Files_to_copy are {{ files_to_copy.stdout_lines }} and their length is {{ files_to_copy.stdout_lines | length }} and the comparison is {{ files_to_copy.stdout_lines | length | int >=1 }}"
-
    - name: Get file date.
      local_action:
        shell basename {{ item }} | cut -d'_' -f2 | cut -d'.' -f1 | cut -d'-' -f1-3
@@ -40,16 +37,15 @@
         - "--timeout=30"
      when: files_to_copy['stdout_lines'] | length | int >= 1
      with_items: "{{ files_to_copy.stdout_lines }}"
-     register: sync_command
 
-#   - mail:
-#      host: smtp.gmail.com
-#      port: 587
-#      username: gehan.bramble@gmail.com
-#      password: #password
-#      to: gehan.bramble@gmail.com
-#      subject: {{inventory_hostname}}
-#      body: sync_command.stdout_lines
-#     when: "'Fail' in sync_command.stderr"
+   - mail:
+      host: smtp.gmail.com
+      port: 587
+      username: gehan.bramble@gmail.com
+      password: #password
+      to: gehan.bramble@gmail.com
+      subject: {{inventory_hostname}}
+      body: sync_command.stdout_lines
+     when: "'Success' in sync_command.stderr"
 
       
