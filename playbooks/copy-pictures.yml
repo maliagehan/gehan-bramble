@@ -31,6 +31,7 @@
        "{{ files_to_copy.stdout_lines }}"
 
    - name: Pull with rsh/ssh and rsync from chronos
+     register: sync_command
      synchronize:
       src: "{{ img_dir }}/"
       dest: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
@@ -40,7 +41,6 @@
         - "--timeout=30"
      when: files_to_copy['stdout_lines'] | length | int >= 1
      with_items: "{{ files_to_copy.stdout_lines }}"
-     register: sync_command
 
    - command: echo "sync_command.stdout" | mailx -s "{{inventory_hostname}}" maliadong@gmail.com
      when: "'Success' in sync_command.stdout"
