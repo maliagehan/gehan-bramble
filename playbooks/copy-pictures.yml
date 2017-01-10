@@ -12,38 +12,37 @@
 
   tasks:
       
-   - name: Get file name(s)
-     # local_action:
-     #   shell rsh -l pi "{{ inventory_hostname }}" "(cd {{ img_dir }}; find . -maxdepth 1 -type f) | cut -d '/' -f2 && (echo Success >&2)"
-     shell: "(cd {{ img_dir }} && find . -maxdepth 1 -type f) | cut -d '/' -f2 && (echo Success >&2)"
-     become: no
-     register: files_to_copy
-     changed_when: "'Success' in files_to_copy.stderr"
-
-   - debug:
-       msg: "Files_to_copy are {{ files_to_copy.stdout_lines }} and their length is {{ files_to_copy.stdout_lines | length }} and the comparison is {{ files_to_copy.stdout_lines | length | int >=1 }}"
-
-   - name: Get file date.
-     local_action:
-       shell basename {{ item }} | cut -d'_' -f2 | cut -d'.' -f1 | cut -d'-' -f1-3
-     register: folder
-     with_items:
-       "{{ files_to_copy.stdout_lines }}"
+#   - name: Get file name(s)
+#     # local_action:
+#     #   shell rsh -l pi "{{ inventory_hostname }}" "(cd {{ img_dir }}; find . -maxdepth 1 -type f) | cut -d '/' -f2 && (echo Success >&2)"
+#     shell: "(cd {{ img_dir }} && find . -maxdepth 1 -type f) | cut -d '/' -f2 && (echo Success >&2)"
+#     become: no
+#     register: files_to_copy
+#     changed_when: "'Success' in files_to_copy.stderr"
+#
+#   - debug:
+#       msg: "Files_to_copy are {{ files_to_copy.stdout_lines }} and their length is {{ files_to_copy.stdout_lines | length }} and the comparison is {{ files_to_copy.stdout_lines | length | int >=1 }}"
+#
+#   - name: Get file date.
+#     local_action:
+#       shell basename {{ item }} | cut -d'_' -f2 | cut -d'.' -f1 | cut -d'-' -f1-3
+#     register: folder
+#     with_items:
+#       "{{ files_to_copy.stdout_lines }}"
 
    - file:
-      path: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
-      state: absent
+      shell: rm -rf /home/pi/gehan-bramble-images
 
-   - name: Pull with rsh/ssh and rsync from chronos
-     synchronize:
-      src: "{{ img_dir }}/"
-      dest: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
-      mode: pull
-      use_ssh_args: yes
-      ssh_args: yes
-      rsync_opts:
-        - "--remove-source-files"
-        - "--timeout=30"
+#   - name: Pull with rsh/ssh and rsync from chronos
+#     synchronize:
+#      src: "{{ img_dir }}/"
+#      dest: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
+#      mode: pull
+#      use_ssh_args: yes
+#      ssh_args: yes
+#      rsync_opts:
+#        - "--remove-source-files"
+#        - "--timeout=30"
 
 
       
