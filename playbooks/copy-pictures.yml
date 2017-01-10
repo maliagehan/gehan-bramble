@@ -35,9 +35,15 @@
       src: "{{ img_dir }}/"
       dest: "{{ local_dir }}/{{ folder.results[0].stdout }}/"
       mode: pull
+      register: result
       rsync_opts:
         - "--remove-source-files"
         - "--timeout=30"
 
+      when: files_to_copy['stdout_lines'] | length | int >= 1
+      with_items: "{{ files_to_copy.stdout_lines }}"
+
+   - command: echo "{{inventory_hostname}} failed to transfer to master" | mailx -s "{{inventory_hostname}}" maliadong@gmail.com
+     when: result|succeeded
 
       
