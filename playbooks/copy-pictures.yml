@@ -38,14 +38,4 @@
      when: files_to_copy['stdout_lines'] | length | int >= 1
      with_items: "{{ files_to_copy.stdout_lines }}"
 
-   - mail:
-      host: smtp.gmail.com
-      port: 587
-      username: gehan.bramble@gmail.com
-      password: #password
-      to: gehan.bramble@gmail.com
-      subject: {{inventory_hostname}}
-      body: sync_command.stdout_lines
-     when: "'Success' in sync_command.stderr"
-
       

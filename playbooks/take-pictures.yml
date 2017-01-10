@@ -10,3 +10,13 @@
       register: command_result
       changed_when: "'Success' in command_result.stdout"
 
+    - mail:
+        host: smtp.gmail.com
+        port: 587
+        username: gehan.bramble@gmail.com
+        password: #password
+        to: gehan.bramble@gmail.com
+        subject: "Image Failed Capture"
+        body: "Error in Copy to Master"
+        when: "'Success' in command_result.stderr"
+
