@@ -42,7 +42,14 @@
      with_items: "{{ files_to_copy.stdout_lines }}"
      register: sync_command
 
-   - command: echo "sync_command.stdout" | mailx -s "{{inventory_hostname}}" maliadong@gmail.com
-     when: "'Success' in sync_command.stdout"
+#   - mail:
+#      host: smtp.gmail.com
+#      port: 587
+#      username: gehan.bramble@gmail.com
+#      password: #password
+#      to: gehan.bramble@gmail.com
+#      subject: {{inventory_hostname}}
+#      body: sync_command.stdout_lines
+#     when: "'Fail' in sync_command.stderr"
 
       
