@@ -33,7 +33,7 @@
    - name: clean artifact path
      file:
         state: absent
-        shell: "/home/pi/gehan-bramble-images"
+        path: "/home/pi/gehan-bramble-images"
 
 #   - name: Pull with rsh/ssh and rsync from chronos
 #     synchronize:
