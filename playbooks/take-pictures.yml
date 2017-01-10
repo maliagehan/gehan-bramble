@@ -13,5 +13,5 @@
     - name: Send notification message via Slack
       slack:
         token: T07FV9P0E/B3QFSJNK1/MwTWMsoZ0p2eMoYTNuBeoUKg
-        msg: '{{ inventory_hostname }} failed'
-      when: "'Success' in command_result.stdout"
+        msg: '{{ inventory_hostname }} failed to take an image'
+      when: "'Fail' in command_result.stdout"
