@@ -9,8 +9,10 @@
       shell: python /home/pi/camera_single.py && echo Success
       register: command_result
       changed_when: "'Success' in command_result.stdout"
-#      slack:
-#        when: "'Success' not in command_result.stdout"
-#        token: #enter token
-#        channel: gehan-lab
-#        msg: '{{ inventory_hostname }} image capture failure'
+
+    - name: slack error
+      slack:
+        token: #enter token
+        channel: gehan-lab
+        msg: '{{ inventory_hostname }} image capture failure'
+      when: "'Success' in command_result.stdout"
