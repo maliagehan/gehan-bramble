@@ -12,7 +12,8 @@
     cron_remove: false
     python_script: false
     pi_id: false
-    install_picam: true
+    install_picam: false
+    install_rsync: true
     
   tasks:
 
@@ -21,6 +22,12 @@
         name: python-picamera
         force: yes
       when: install_picam
+
+    - name: install rsync
+      apt:
+        name: rsync
+        force: yes
+      when: install_rsync
 
     - name: Restart ssh service on all PIs
       command: systemctl restart ssh.service
