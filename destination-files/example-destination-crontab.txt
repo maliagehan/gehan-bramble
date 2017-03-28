@@ -1,0 +1,4 @@
+#example of crontab file
+
+10,35,40 * * * * /usr/bin/python /shares/mgehan_share/raw_data/raw_image/gehan-bramble-images/ping-master.py &>/dev/null
+

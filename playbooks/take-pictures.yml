@@ -3,8 +3,9 @@
   gather_facts: False
   remote_user: pi
   ignore_errors: True
-
+  
   tasks:
+
     - name: Take picture on the raspberry pi.
       shell: python /home/pi/camera_single.py && echo Success
       register: command_result
@@ -12,6 +13,6 @@
 
     - name: Send notification message via Slack
       slack:
-        token: #token
-        msg: '{{ inventory_hostname }} failed to take an image'
-      when: "'Fail' in command_result.stdout"
+        token: #webhook token here
+        msg: '{{ inventory_hostname }} failed to take an image check camera connection'
+      when: "'Failed' in command_result.stderr"

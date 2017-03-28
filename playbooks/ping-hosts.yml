@@ -1,0 +1,11 @@
+---
+- hosts: gehan-bramble
+  gather_facts: False
+  remote_user: pi
+  ignore_errors: True
+
+  tasks:
+
+    - name: ping hosts
+      ping:
+      register: ping_output
