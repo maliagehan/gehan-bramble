@@ -136,12 +136,24 @@ with picamera.PiCamera() as camera:
         filename = str(ip)+"_pos-"+position+"_"+minute+".jpg"
         print(filename)
         filename = os.path.join(hour_directory, filename)
+	camera.resolution = (3280, 2464)
+        # Set ISO to the desired value
+        camera.iso = 60
+        # Wait for the automatic gain control to settle
+        time.sleep(2)
+        # Now fix the values
+	camera.meter_mode="matrix"
+        camera.shutter_speed = 3000 #camera.exposure_speed
+        camera.exposure_mode = 'off'
+        g = camera.awb_gains
+        camera.awb_mode = 'off'
+        camera.awb_gains = g
         camera.capture(filename, quality=100)
         print("Captured %s" % filename)
 
         # Getting all the metadata that will be going into the json file.
         metadata_name = filename[:-4]
-        experiment = "jt-quinoa-cold"
+        experiment = "sentinel-me034"
         metadata = make_metadata(experiment, ip, camera, position)
         json_filename = metadata_name + ".json"
         json_filename = os.path.join(hour_directory, json_filename)
