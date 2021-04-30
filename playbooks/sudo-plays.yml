@@ -8,8 +8,6 @@
     restart_ssh: false
     timezone: US/Central
     timezone_change: false
-    cron_add: false
-    cron_remove: true
     python_script: true
     pi_id: true
     install_picam: false
